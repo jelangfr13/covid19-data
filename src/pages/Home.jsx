@@ -43,7 +43,7 @@ const Home = () => {
 
   return (
     <div className="relative">
-      {loading ? <p>Loading...</p> : <CountryList countries={countries} />}
+      {loading ? <p className="flex justify-center items-center">Loading...</p> : <CountryList countries={countries} />}
 
       {/* Tombol Scroll to Top */}
       {showScrollButton && (
