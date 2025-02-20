@@ -15,13 +15,13 @@ function App() {
             </a>
             <div className="mr-10">
               <a href="/" className="mr-4 hover:text-black hover:duration-300">Home</a>
-              <a href="/notes" className="hover:text-black hover:duration-300">Notes</a>
+              <a href="/Notes" className="hover:text-black hover:duration-300">Notes</a>
             </div>
           </nav>
           <div className="container mx-auto p-4">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/notes" element={<Notes />} />
+              <Route path="/Notes" element={<Notes />} />
               <Route path="/details/:country" element={<CountryDetails />} />
             </Routes>
           </div>
