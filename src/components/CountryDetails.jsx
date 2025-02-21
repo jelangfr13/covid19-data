@@ -81,36 +81,53 @@ const CountryDetails = () => {
                   )}
                   <div>
                     {editingNote === note.id ? (
-                      <button
-                        className="text-blue-500 ml-2"
-                        onClick={() => {
-                          editNote(note.id, editText);
-                          setEditingNote(null);
-                        }}
-                      >
-                        Save
-                      </button>
+                      <>
+                        {/* Tombol Save */}
+                        <button
+                          className="text-green-500 ml-2"
+                          onClick={() => {
+                            editNote(note.id, editText);
+                            setEditingNote(null);
+                          }}
+                        >
+                          Save
+                        </button>
+
+                        {/* Tombol Cancel */}
+                        <button
+                          className="text-gray-500 ml-2"
+                          onClick={() => setEditingNote(null)}
+                        >
+                          Cancel
+                        </button>
+                      </>
                     ) : (
-                      <button
-                        className="text-blue-500 ml-2"
-                        onClick={() => {
-                          setEditingNote(note.id);
-                          setEditText(note.note);
-                        }}
-                      >
-                        Edit
-                      </button>
+                      <>
+                        {/* Tombol Edit */}
+                        <button
+                          className="text-blue-500 ml-2"
+                          onClick={() => {
+                            setEditingNote(note.id);
+                            setEditText(note.note);
+                          }}
+                        >
+                          Edit
+                        </button>
+
+                        {/* Tombol Delete (hanya muncul jika tidak dalam mode edit) */}
+                        <button
+                          className="text-red-500 ml-2"
+                          onClick={() => deleteNote(note.id)}
+                        >
+                          Delete
+                        </button>
+                      </>
                     )}
-                    <button
-                      className="text-red-500 ml-2"
-                      onClick={() => deleteNote(note.id)}
-                    >
-                      Delete
-                    </button>
                   </div>
                 </li>
               ))}
           </ul>
+
         )}
       </div>
     </div>
