@@ -60,9 +60,9 @@ const CountryDetails = () => {
       </div>
 
       <div className="mt-6">
-        <h3 className="text-lg font-bold mb-2">Saved Notes</h3>
+        <h3 className="flex items-center justify-center text-lg font-bold mb-2">Saved Notes</h3>
         {savedNotes.filter((note) => note.country === countryData.country).length === 0 ? (
-          <p className="text-gray-500">No notes yet.</p>
+          <p className="flex items-center justify-center text-gray-500">No notes yet.</p>
         ) : (
           <ul className="list-disc pl-4">
             {savedNotes

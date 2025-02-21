@@ -92,11 +92,7 @@ const CountryList = () => {
       {/* Dropdown Filter */}
       <div className="mb-4">
         <label className="block text-gray-700 font-semibold mb-2">Sort By:</label>
-        <select
-          className="border border-gray-300 rounded p-2 w-full"
-          value={sortOption}
-          onChange={(e) => setSortOption(e.target.value)}
-        >
+        <select className="border border-gray-300 rounded p-2 w-full" value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
           <option value="">-- Select Sorting Option --</option>
           <option value="cases-highest">Cases: Highest to Lowest</option>
           <option value="cases-lowest">Cases: Lowest to Highest</option>
@@ -114,6 +110,7 @@ const CountryList = () => {
         <table className="w-full border-collapse border border-gray-300">
           <thead>
             <tr className="bg-gray-200">
+              <th className="border p-2">No</th>
               <th className="border p-2">Flag</th>
               <th className="border p-2">Country</th>
               <th className="border p-2">Cases</th>
@@ -123,8 +120,9 @@ const CountryList = () => {
             </tr>
           </thead>
           <tbody>
-            {displayedCountries.map((country) => (
+            {displayedCountries.map((country, index) => (
               <tr key={country.country} className="text-center hover:bg-gray-100">
+                <td className="border p-2">{index + 1}</td>
                 <td className="border p-2">
                   <img src={country.countryInfo.flag} alt={country.country} className="w-8 h-5 mx-auto" />
                 </td>
@@ -133,12 +131,7 @@ const CountryList = () => {
                 <td className="border p-2">{country.deaths.toLocaleString()}</td>
                 <td className="border p-2">{country.recovered.toLocaleString()}</td>
                 <td className="border p-2">
-                  <Link
-                    to={`/details/${country.country}`}
-                    className="text-blue-500 hover:underline"
-                  >
-                    View
-                  </Link>
+                  <Link to={`/details/${country.country}`} className="text-blue-500 hover:underline">View</Link>
                 </td>
               </tr>
             ))}

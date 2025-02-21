@@ -45,12 +45,9 @@ const Home = () => {
     <div className="relative">
       {loading ? <p className="flex justify-center items-center">Loading...</p> : <CountryList countries={countries} />}
 
-      {/* Tombol Scroll to Top */}
+      {/* Button Scroll to Top */}
       {showScrollButton && (
-        <button
-          className="fixed bottom-8 right-8 bg-blue-500 text-white px-3 py-2 rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
-          onClick={scrollToTop}
-        >
+        <button className="fixed bottom-8 right-8 bg-blue-500 text-white px-3 py-2 rounded-full shadow-lg hover:bg-blue-700 transition duration-300" onClick={scrollToTop}>
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="#ffecec" d="M13 12v8h-2v-8H4l8-8l8 8z"/></svg>
         </button>
       )}

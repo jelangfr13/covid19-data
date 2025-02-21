@@ -9,16 +9,17 @@ function App() {
     <AppProvider>
       <Router>
         <div className="min-h-screen bg-gray-100">
-          <nav className="bg-blue-500 p-4 text-white flex justify-between">
+          <nav className="fixed w-screen z-10 bg-blue-500 p-4 text-white flex justify-between lg:px-10 px-5">
             <a href="/">
-              <h1 className="ml-10 text-xl font-bold hover:text-black hover:duration-300">COVID-19 Tracker</h1>
+              <h1 className="text-xl font-bold hover:text-black hover:duration-300">COVID-19 Tracker</h1>
             </a>
-            <div className="mr-10">
+            <div>
               <a href="/" className="mr-4 hover:text-black hover:duration-300">Home</a>
               <a href="/Notes" className="hover:text-black hover:duration-300">Notes</a>
             </div>
           </nav>
-          <div className="container mx-auto p-4">
+          
+          <div className="pt-20 container mx-auto p-4">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/Notes" element={<Notes />} />
