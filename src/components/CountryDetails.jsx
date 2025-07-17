@@ -1,40 +1,65 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
+
 import NoteForm from "./NoteForm";
+
+import useCovid19Countries from "../hooks/useCovid19Countries";
+
+import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
+import CircularProgress from "@mui/material/CircularProgress";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { Stack } from "@mui/material";
 
 const CountryDetails = () => {
   const { country } = useParams();
-  const [countryData, setCountryData] = useState(null);
   const { savedNotes, editNote, deleteNote } = useContext(AppContext);
+
   const [editingNote, setEditingNote] = useState(null);
   const [editText, setEditText] = useState("");
 
-  useEffect(() => {
-    const fetchCountryData = async () => {
-      try {
-        const response = await fetch(`https://disease.sh/v3/covid-19/countries/${country}`);
-        if (!response.ok) throw new Error("Failed to fetch country data");
-        const data = await response.json();
-        setCountryData(data);
-      } catch (error) {
-        console.error("Error fetching country data:", error);
-      }
-    };
+  const { countryData, countryLoading, countryError } = useCovid19Countries(country);
 
-    fetchCountryData();
-  }, [country]);
+  const isMobile = useMediaQuery("(max-width:600px)");
 
-  if (!countryData) {
-    return <div className="text-center p-4">Loading...</div>;
+  if (countryLoading || !countryData) {
+    return (
+      <Box textAlign="center" p={4}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (countryError) {
+    return (
+      <Box textAlign="center" p={4}>
+        <Typography color="error">Error loading country data.</Typography>
+      </Box>
+    );
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6">
-      <div className="flex items-center space-x-4 mb-4">
-        <img src={countryData.countryInfo.flag} alt={countryData.country} className="w-16 h-10 border rounded" />
-        <h2 className="text-2xl font-bold">{countryData.country}</h2>
-      </div>
+    <Card sx={{ maxWidth: 700, mx: "auto", bgcolor: "white", boxShadow: 3, borderRadius: 2, p: 3 }}>
+      <Box display="flex" alignItems="center" justifyContent="center" gap={2} mb={3}>
+        <Avatar
+          src={countryData.countryInfo.flag}
+          alt={countryData.country}
+          sx={{ width: 64, height: 40, border: "1px solid #e5e7eb", borderRadius: 2 }}
+          variant="rounded"
+        />
+        <Typography variant={isMobile ? "h5" : "h4"} fontWeight="bold">
+          {countryData.country}
+        </Typography>
+      </Box>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-gray-100 p-4 rounded text-center">
@@ -55,82 +80,105 @@ const CountryDetails = () => {
         </div>
       </div>
 
-      <div className="mt-6">
+      <Box mt={4}>
         <NoteForm country={countryData.country} />
-      </div>
+      </Box>
 
-      <div className="mt-6">
-        <h3 className="flex items-center justify-center text-lg font-bold mb-2">Saved Notes</h3>
+      <Box mt={4}>
+        <Typography variant="h6" align="center" fontWeight="bold" mb={2}>
+          Saved Notes
+        </Typography>
         {savedNotes.filter((note) => note.country === countryData.country).length === 0 ? (
-          <p className="flex items-center justify-center text-gray-500">No notes yet.</p>
+          <Typography align="center" color="text.secondary">
+            No notes yet.
+          </Typography>
         ) : (
-          <ul className="list-disc pl-4">
+          <List>
             {savedNotes
               .filter((note) => note.country === countryData.country)
               .map((note) => (
-                <li key={note.id} className="text-gray-700 flex justify-between items-center">
-                  {editingNote === note.id ? (
-                    <input
-                      type="text"
-                      value={editText}
-                      onChange={(e) => setEditText(e.target.value)}
-                      className="w-[500px] border p-1 rounded"
+                <ListItem
+                  key={note.id}
+                  sx={{
+                    color: "#374151",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    maxWidth: 600, // batas lebar
+                    margin: "0 auto",
+                    gap: 1,
+                  }}
+                  disablePadding
+                >
+                  <Box sx={{ flex: 1, maxWidth: "auto", wordBreak: "break-word" }}>
+                    <ListItemText
+                      primary={
+                        editingNote === note.id ? (
+                          <TextField
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            size="small"
+                            sx={{ width: isMobile ? "auto" : 450, bgcolor: "white" }}
+                          />
+                        ) : (
+                          note.note
+                        )
+                      }
                     />
-                  ) : (
-                    <span>{note.note}</span>
-                  )}
-                  <div>
+                  </Box>
+                  <Stack direction={isMobile ? "column" : "row"}>
                     {editingNote === note.id ? (
                       <>
-                        {/* Tombol Save */}
-                        <button
-                          className="text-blue-500 ml-2"
+                        <Button
+                          color="primary"
+                          size="small"
+                          sx={{ ml: 1 }}
                           onClick={() => {
                             editNote(note.id, editText);
                             setEditingNote(null);
                           }}
                         >
                           Save
-                        </button>
-
-                        {/* Tombol Cancel */}
-                        <button
-                          className="text-gray-500 ml-2"
+                        </Button>
+                        <Button
+                          color="inherit"
+                          size="small"
+                          sx={{ ml: 1 }}
                           onClick={() => setEditingNote(null)}
                         >
                           Cancel
-                        </button>
+                        </Button>
                       </>
                     ) : (
                       <>
-                        {/* Tombol Edit */}
-                        <button
-                          className="text-blue-500 ml-2"
+                        <Button
+                          color="primary"
+                          size="small"
+                          sx={{ ml: 1 }}
                           onClick={() => {
                             setEditingNote(note.id);
                             setEditText(note.note);
                           }}
                         >
                           Edit
-                        </button>
-
-                        {/* Tombol Delete (hanya muncul jika tidak dalam mode edit) */}
-                        <button
-                          className="text-red-500 ml-2"
+                        </Button>
+                        <Button
+                          color="error"
+                          size="small"
+                          sx={{ ml: 1 }}
                           onClick={() => deleteNote(note.id)}
                         >
                           Delete
-                        </button>
+                        </Button>
                       </>
                     )}
-                  </div>
-                </li>
+                  </Stack>
+                </ListItem>
               ))}
-          </ul>
-
+          </List>
         )}
-      </div>
-    </div>
+      </Box>
+    </Card>
   );
 };
 

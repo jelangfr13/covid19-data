@@ -1,5 +1,10 @@
 import { useState, useContext } from "react";
+
 import { AppContext } from "../context/AppContext";
+
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 const NoteForm = ({ country }) => {
   const { addNote } = useContext(AppContext);
@@ -7,16 +12,53 @@ const NoteForm = ({ country }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!note.trim()) return; // mencegah input kosong
+    if (!note.trim()) return;
     addNote(country, note);
-    setNote(""); // mereset input setelah ditambahkan
+    setNote("");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center mt-4">
-      <textarea className="w-full border p-2 rounded resize-none" rows="3" placeholder="Add a note..." value={note} onChange={(e) => setNote(e.target.value)}></textarea>
-      <button type="submit" className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Save Note</button>
-    </form>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        mt: 4,
+      }}
+    >
+      <TextField
+        multiline
+        rows={3}
+        placeholder="Add a note..."
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        variant="outlined"
+        sx={{
+          width: "100%",
+          borderRadius: 1,
+          bgcolor: "background.paper",
+        }}
+      />
+      <Button
+        type="submit"
+        variant="contained"
+        sx={{
+          mt: 2,
+          px: 2,
+          bgcolor: "#3b82f6",
+          color: "#fff",
+          borderRadius: 1,
+          "&:hover": {
+            bgcolor: "#2563eb",
+          },
+        }}
+      >
+        Save Note
+      </Button>
+    </Box>
   );
 };
 
