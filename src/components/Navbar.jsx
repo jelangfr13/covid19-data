@@ -5,14 +5,17 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 function Navbar() {
+  const isMobile = useMediaQuery("(max-width:600px)");
+
   return (
     <AppBar position="fixed" sx={{ backgroundColor: "#4285f4" }}>
       <Toolbar sx={{ justifyContent: "space-between", px: { xs: 2, lg: 10 } }}>
         <Box>
           <Typography
-            variant="h6"
+            variant={isMobile ? "body1" : "h6"}
             component={Link}
             to="/"
             sx={{
