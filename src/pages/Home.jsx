@@ -1,20 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+
 import CountryList from "../components/CountryList";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp"; // Tambahkan import icon
 
 const Home = () => {
-  const [countries, setCountries] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showScrollButton, setShowScrollButton] = useState(false);
-
-  useEffect(() => {
-    fetch("https://disease.sh/v3/covid-19/countries")
-      .then((response) => response.json())
-      .then((data) => {
-        setCountries(data);
-        setLoading(false);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
 
   // Fungsi untuk mendeteksi scroll
   useEffect(() => {
@@ -27,7 +19,7 @@ const Home = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-    
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -42,16 +34,39 @@ const Home = () => {
   };
 
   return (
-    <div className="relative">
-      {loading ? <p className="flex justify-center items-center">Loading...</p> : <CountryList countries={countries} />}
+    <Box position="relative">
+      <CountryList />
 
       {/* Button Scroll to Top */}
       {showScrollButton && (
-        <button className="fixed bottom-8 right-8 bg-blue-500 text-white px-3 py-2 rounded-full shadow-lg hover:bg-blue-700 transition duration-300" onClick={scrollToTop}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="#ffecec" d="M13 12v8h-2v-8H4l8-8l8 8z"/></svg>
-        </button>
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: 32,
+            right: 32,
+            zIndex: 1000,
+          }}
+        >
+          <Button
+            onClick={scrollToTop}
+            variant="contained"
+            color="primary"
+            sx={{
+              minWidth: 0,
+              width: 48,
+              height: 48,
+              borderRadius: "50%",
+              boxShadow: 3,
+              p: 0,
+              bgcolor: "#4285f4",
+              "&:hover": { bgcolor: "#1a73e8" },
+            }}
+          >
+            <KeyboardDoubleArrowUpIcon sx={{ color: "#ffecec", fontSize: 32 }} />
+          </Button>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

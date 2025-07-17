@@ -1,24 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Alert from "@mui/material/Alert";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+import useCovid19Countries from "../hooks/useCovid19Countries";
+
 const CountryList = () => {
-  const [countries, setCountries] = useState([]);
+  const { countries, loading, error } = useCovid19Countries();
+
   const [sortOption, setSortOption] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://disease.sh/v3/covid-19/countries");
-        const data = await response.json();
-        setCountries(data);
-      } catch (error) {
-        console.error("Error fetching country data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   // Fungsi untuk mengurutkan berdasarkan pilihan filter
   const sortCountries = (option, data) => {
@@ -74,76 +84,114 @@ const CountryList = () => {
   const displayedCountries = sortCountries(sortOption, filterCountries());
 
   return (
-    <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-      <h2 className="flex items-center justify-center text-2xl font-bold mb-4">COVID-19 Data by Country</h2>
+    <Box maxWidth="lg" mx="auto" my={isMobile ? 0 : 2} p={3} component={Paper} elevation={3}>
+      <Typography variant="h5" align="center" fontWeight="bold" mb={3}>
+        COVID-19 Data by Country
+      </Typography>
 
       {/* Search Input */}
-      <div className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-2">Search:</label>
-        <input
-          type="text"
-          placeholder="Search by country name or number..."
-          className="border border-gray-300 rounded p-2 w-full"
+      <Box mb={1}>
+        <TextField
+          label="Search by country name or number..."
+          variant="outlined"
+          fullWidth
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-      </div>
+      </Box>
 
       {/* Dropdown Filter */}
-      <div className="mb-4">
-        <label className="block text-gray-700 font-semibold mb-2">Sort By:</label>
-        <select className="border border-gray-300 rounded p-2 w-full" value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
-          <option value="">-- Select Sorting Option --</option>
-          <option value="cases-highest">Cases: Highest to Lowest</option>
-          <option value="cases-lowest">Cases: Lowest to Highest</option>
-          <option value="deaths-highest">Deaths: Highest to Lowest</option>
-          <option value="deaths-lowest">Deaths: Lowest to Highest</option>
-          <option value="recovered-highest">Recovered: Highest to Lowest</option>
-          <option value="recovered-lowest">Recovered: Lowest to Highest</option>
-          <option value="name-asc">Country: A-Z</option>
-          <option value="name-desc">Country: Z-A</option>
-        </select>
-      </div>
+      <Box mb={2}>
+        <FormControl fullWidth>
+          <InputLabel id="sort-label">Sort By</InputLabel>
+          <Select
+            labelId="sort-label"
+            value={sortOption}
+            label="Sort By"
+            onChange={(e) => setSortOption(e.target.value)}
+          >
+            <MenuItem value="">-- Select Sorting Option --</MenuItem>
+            <MenuItem value="cases-highest">Cases: Highest to Lowest</MenuItem>
+            <MenuItem value="cases-lowest">Cases: Lowest to Highest</MenuItem>
+            <MenuItem value="deaths-highest">Deaths: Highest to Lowest</MenuItem>
+            <MenuItem value="deaths-lowest">Deaths: Lowest to Highest</MenuItem>
+            <MenuItem value="recovered-highest">Recovered: Highest to Lowest</MenuItem>
+            <MenuItem value="recovered-lowest">Recovered: Lowest to Highest</MenuItem>
+            <MenuItem value="name-asc">Country: A-Z</MenuItem>
+            <MenuItem value="name-desc">Country: Z-A</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
 
-      {/* Tabel Data Negara */}
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border p-2">No</th>
-              <th className="border p-2">Flag</th>
-              <th className="border p-2">Country</th>
-              <th className="border p-2">Cases</th>
-              <th className="border p-2">Deaths</th>
-              <th className="border p-2">Recovered</th>
-              <th className="border p-2">Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {displayedCountries.map((country, index) => (
-              <tr key={country.country} className="text-center hover:bg-gray-100">
-                <td className="border p-2">{index + 1}</td>
-                <td className="border p-2">
-                  <img src={country.countryInfo.flag} alt={country.country} className="w-8 h-5 mx-auto" />
-                </td>
-                <td className="border p-2">{country.country}</td>
-                <td className="border p-2">{country.cases.toLocaleString()}</td>
-                <td className="border p-2">{country.deaths.toLocaleString()}</td>
-                <td className="border p-2">{country.recovered.toLocaleString()}</td>
-                <td className="border p-2">
-                  <Link to={`/details/${country.country}`} className="text-blue-500 hover:underline">View</Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Jika tidak ada hasil pencarian */}
-      {displayedCountries.length === 0 && (
-        <p className="text-center text-gray-500 mt-4">No matching results found.</p>
+      {/* Loading & Error State */}
+      {loading && (
+        <Box display="flex" justifyContent="center" my={4}>
+          <CircularProgress />
+        </Box>
       )}
-    </div>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          Error fetching country data: {error.message}
+        </Alert>
+      )}
+      
+      {!loading && !error && (
+        <>
+          {/* Tabel Data Negara */}
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: "#e3e3e3" }}>
+                  <TableCell>No</TableCell>
+                  <TableCell>Flag</TableCell>
+                  <TableCell>Country</TableCell>
+                  <TableCell>Cases</TableCell>
+                  <TableCell>Deaths</TableCell>
+                  <TableCell>Recovered</TableCell>
+                  <TableCell>Details</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {displayedCountries.map((country, index) => (
+                  <TableRow key={country.country} hover>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>
+                      <img
+                        src={country.countryInfo.flag}
+                        alt={country.country}
+                        style={{ width: 32, height: 20, display: "block", margin: "0 auto" }}
+                      />
+                    </TableCell>
+                    <TableCell>{country.country}</TableCell>
+                    <TableCell>{country.cases.toLocaleString()}</TableCell>
+                    <TableCell>{country.deaths.toLocaleString()}</TableCell>
+                    <TableCell>{country.recovered.toLocaleString()}</TableCell>
+                    <TableCell>
+                      <Button
+                        component={Link}
+                        to={`/details/${country.country}`}
+                        variant="text"
+                        color="primary"
+                        size="small"
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {/* Jika tidak ada hasil pencarian */}
+          {displayedCountries.length === 0 && (
+            <Typography align="center" color="text.secondary" mt={3}>
+              No matching results found.
+            </Typography>
+          )}
+        </>
+      )}
+    </Box>
   );
 };
 
