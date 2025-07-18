@@ -6,19 +6,19 @@
 ```
 
 # Home page
-![image](https://github.com/user-attachments/assets/af144a17-4d53-422a-9385-28bb7ce1f15b)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4752d2c2-32c8-40ff-b8e8-6d987b27de38" />
 
 # Filter option
-![image](https://github.com/user-attachments/assets/3e45764c-8833-4849-b905-f916329e0b48)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4a7f577a-1723-4b43-90fa-9ba1a26b44da" />
 
 # Search Feature
-![image](https://github.com/user-attachments/assets/883b0db6-a3f2-479a-aedc-eb27696f1aa2)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/aa5dcae1-06f9-4a89-bbca-559d1453f3ba" />
 
 # Country Details
-![image](https://github.com/user-attachments/assets/0f1ba65e-df54-4f6a-9e73-105204acfe7e)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2c08b18b-f24e-4eff-9f9b-fb84558a972c" />
 
 # Notes page
-![image](https://github.com/user-attachments/assets/24b41ac5-74f7-497e-a0a8-36833802ef0a)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/59024ba5-352b-4ffa-9a6c-aa7cceac9863" />
 
 # Edit Notes
-![image](https://github.com/user-attachments/assets/731136bb-ed04-4171-9456-e30aa14139f4)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/21f58379-2c05-4944-af1b-fa18c61f6b1b" />
