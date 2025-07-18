@@ -1,39 +1,64 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
+import { db } from "../firebase";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  updateDoc,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  // mengambil data notes dari localStorage saat pertama kali aplikasi dijalankan
-  const [savedNotes, setSavedNotes] = useState(() => {
-    const storedNotes = localStorage.getItem("notes");
-    return storedNotes ? JSON.parse(storedNotes) : [];
-  });
+  const [savedNotes, setSavedNotes] = useState([]);
 
-  // menyimpan notes ke localStorage setiap kali savedNotes berubah
+  // Fetch notes dari Firestore
   useEffect(() => {
-    localStorage.setItem("notes", JSON.stringify(savedNotes));
-  }, [savedNotes]);
+    const fetchNotes = async () => {
+      const notesCol = collection(db, "notes");
+      const notesSnapshot = await getDocs(notesCol);
+      const notesList = notesSnapshot.docs.map((d) => ({
+        id: d.id,
+        ...d.data(),
+      }));
+      setSavedNotes(notesList);
+    };
+    fetchNotes();
+  }, []);
 
-  // menambahkan notes baru
-  const addNote = (country, note) => {
-    const newNote = { id: Date.now(), country, note };
-    setSavedNotes((prevNotes) => [...prevNotes, newNote]);
+  // Add note
+  const addNote = async (country, note) => {
+    const docRef = await addDoc(collection(db, "notes"), { country, note });
+    setSavedNotes((prev) => [...prev, { id: docRef.id, country, note }]);
   };
 
-  // mengedit notes
-  const editNote = (id, updatedNote) => {
-    setSavedNotes((prevNotes) =>
-      prevNotes.map((note) => (note.id === id ? { ...note, note: updatedNote } : note))
+  // Edit note
+  const editNote = async (id, newNote) => {
+    await updateDoc(doc(db, "notes", id), { note: newNote });
+    setSavedNotes((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, note: newNote } : n))
     );
   };
 
-  // menghapus notes
-  const deleteNote = (id) => {
-    setSavedNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+  // Delete note
+  const deleteNote = async (id) => {
+    await deleteDoc(doc(db, "notes", id));
+    setSavedNotes((prev) => prev.filter((n) => n.id !== id));
   };
 
   return (
-    <AppContext.Provider value={{ savedNotes, addNote, editNote, deleteNote }}>
+    <AppContext.Provider
+      value={{
+        savedNotes,
+        addNote,
+        editNote,
+        deleteNote,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

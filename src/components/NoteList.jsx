@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { db } from "../firebase";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -19,27 +21,38 @@ import Divider from '@mui/material/Divider';
 const NoteList = () => {
   const [notes, setNotes] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+
+  // Ambil data notes dari Firestore
+  const fetchNotes = async () => {
+    const notesCol = collection(db, "notes");
+    const notesSnapshot = await getDocs(notesCol);
+    const notesList = notesSnapshot.docs.map((d) => ({
+      id: d.id,
+      ...d.data(),
+    }));
+    setNotes(notesList);
+  };
 
   useEffect(() => {
-    const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
-    setNotes(savedNotes);
+    fetchNotes();
   }, []);
 
-  const handleDialogOpen = (index) => {
-    setDeleteIndex(index);
+  const handleDialogOpen = (id) => {
+    setDeleteId(id);
     setOpenDialog(true);
   };
 
   const handleDialogClose = () => {
     setOpenDialog(false);
-    setDeleteIndex(null);
+    setDeleteId(null);
   };
 
-  const handleDeleteConfirm = () => {
-    const updatedNotes = notes.filter((_, i) => i !== deleteIndex);
-    setNotes(updatedNotes);
-    localStorage.setItem("notes", JSON.stringify(updatedNotes));
+  const handleDeleteConfirm = async () => {
+    if (deleteId) {
+      await deleteDoc(doc(db, "notes", deleteId));
+      setNotes((prev) => prev.filter((note) => note.id !== deleteId));
+    }
     handleDialogClose();
   };
 
@@ -70,8 +83,8 @@ const NoteList = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {notes.map((note, index) => (
-                  <TableRow key={index}>
+                {notes.map((note) => (
+                  <TableRow key={note.id}>
                     <TableCell sx={{ width: "25%", minWidth: "200px" }}>{note.country}</TableCell>
                     <TableCell sx={{ width: "100%", minWidth: "400px" }}>{note.note}</TableCell>
                     <TableCell align="center">
@@ -88,7 +101,7 @@ const NoteList = () => {
                           "&:hover": { bgcolor: "#dc2626" },
                           minWidth: "64px"
                         }}
-                        onClick={() => handleDialogOpen(index)}
+                        onClick={() => handleDialogOpen(note.id)}
                       >
                         Delete
                       </Button>

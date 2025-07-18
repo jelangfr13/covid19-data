@@ -19,6 +19,10 @@ import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import CircularProgress from "@mui/material/CircularProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Stack } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
 
 const CountryDetails = () => {
   const { country } = useParams();
@@ -26,6 +30,8 @@ const CountryDetails = () => {
 
   const [editingNote, setEditingNote] = useState(null);
   const [editText, setEditText] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const { countryData, countryLoading, countryError } = useCovid19Countries(country);
 
@@ -46,6 +52,23 @@ const CountryDetails = () => {
       </Box>
     );
   }
+
+  const handleDialogOpen = (id) => {
+    setDeleteId(id);
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+    setDeleteId(null);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteId) {
+      deleteNote(deleteId);
+    }
+    handleDialogClose();
+  };
 
   return (
     <Card sx={{ maxWidth: 700, mx: "auto", bgcolor: "white", boxShadow: 3, borderRadius: 2, p: 3 }}>
@@ -166,7 +189,7 @@ const CountryDetails = () => {
                           color="error"
                           size="small"
                           sx={{ ml: 1 }}
-                          onClick={() => deleteNote(note.id)}
+                          onClick={() => handleDialogOpen(note.id)}
                         >
                           Delete
                         </Button>
@@ -178,6 +201,21 @@ const CountryDetails = () => {
           </List>
         )}
       </Box>
+
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Delete Note</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this note?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="inherit">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 };
